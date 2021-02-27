@@ -32,6 +32,7 @@ export default function TextEllipsis({
     width: "100%",
     wordWrap: "break-word",
     lineHeight,
+    paddingBottom: isExpand ? lineHeight : 0
   };
   const maxElliHeight = parseInt(lineHeight) * lines;
 
@@ -116,18 +117,18 @@ export default function TextEllipsis({
   }, [reset, process, isExpand]);
 
   return (
-    <div ref={ref} className={`ellipsis-box ${className}`} style={ellipsisStyle}>
+    <div ref={ref} className={`ellipsis-box with-${isExpand ? "expand" : "collapse"} ${className}`} style={ellipsisStyle}>
       <div className="truncate-text">
         <span ref={elliLessTextRef}>{children}</span>
         {isOverflow && (
-          <span ref={elliMoreRef} className="show-more" onClick={showMore}>
+          <div ref={elliMoreRef} className="show-more" onClick={showMore}>
             {ellipsisMore}
-          </span>
+          </div>
         )}
         {isOverflow && isExpand && (
-          <span className="show-less" onClick={showLess}>
+          <div className="show-less" onClick={showLess}>
             {ellipsisLess}
-          </span>
+          </div>
         )}
       </div>
     </div>
