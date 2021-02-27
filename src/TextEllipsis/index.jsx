@@ -73,7 +73,7 @@ export default function TextEllipsis({
     }
 
     process();
-  }, [isExpand]);
+  }, [isExpand, lines]);
 
   return (
     <div ref={ref} className={`ellipsis-box ${className}`} style={ellipsisStyle}>

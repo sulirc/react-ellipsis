@@ -1,3 +1,14 @@
+.select-lines {
+  display: block;
+  text-align: center;
+  margin: 10px auto;
+  font-size: 18px;
+  select {
+    width: 72px;
+    height: 28px;
+    font-size: 18px;
+  }
+}
 .box {
   width: 375px;
   margin: 0 auto;
