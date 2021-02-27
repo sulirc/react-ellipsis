@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import TextEllipsis from "./TextEllipsis";
 import "./App.scss";
 
@@ -14,34 +14,26 @@ const LINES = {
   m: 5,
   l: 8,
   xl: 12,
+  xxxl: 100
 };
 
 function App() {
-  const [lines, setLines] = useState(LINES[defaultLines]);
-  const changeVisibleLines = (e) => {
-    setLines(LINES[e.target.value]);
-  };
   const handleOnElliResult = (status) => console.log(status);
 
   return (
     <>
       <label className="select-lines">
         选择显示行数：
-        <select name="select" defaultValue={defaultLines} onChange={changeVisibleLines}>
-          <option value="s">3</option>
-          <option value="m">5</option>
-          <option value="l">8</option>
-          <option value="xl">12</option>
-        </select>
+        {LINES[defaultLines]} 行
       </label>
 
       <div className="box">
-        <TextEllipsis 
-          expand
-          className="ellipsis-demo" 
-          lines={lines} 
-          onElliResult={handleOnElliResult}>
-          {Text.zh}
+        <TextEllipsis
+          className="ellipsis-demo"
+          lines={LINES[defaultLines]}
+          onElliResult={handleOnElliResult}
+        >
+          {Text.zhLong}
         </TextEllipsis>
       </div>
     </>

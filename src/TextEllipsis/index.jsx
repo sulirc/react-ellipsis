@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef, useCallback, useEffect } from "react";
+import React, { useState, useLayoutEffect, useRef, useCallback } from "react";
 import "./index.scss";
 
 export const ELLIPSIS = {
@@ -6,16 +6,9 @@ export const ELLIPSIS = {
   NOT_TRUNCATED: "NOT_TRUNCATED",
 };
 
-const STATE = {
-  idle: "idle",
-  normal: "normal",
-  overflow: "overflow",
-};
-
 export default function TextEllipsis({
   children,
   className,
-  expand = false,
   ellipsisChar = "...",
   ellipsisMore = "Show More",
   ellipsisLess = "Show Less",
@@ -24,17 +17,15 @@ export default function TextEllipsis({
   onElliResult = () => {},
 }) {
   const [isExpand, setIsExpand] = useState(false);
-  const [isOverflow, setIsOverflow] = useState(STATE.idle);
+  const [isOverflow, setIsOverflow] = useState(true);
   const ref = useRef(null);
   const elliLessTextRef = useRef(null);
   const elliMoreRef = useRef(null);
   const text = useRef({
     chunks: null,
-    cacheChunks: null,
     elliMoreWidth: 0,
     lastChunk: null,
-    isInitialize: true,
-    currentLines: lines,
+    truncText: null,
   });
   const splitChar = "";
   const ellipsisStyle = {
@@ -52,44 +43,43 @@ export default function TextEllipsis({
   const showMore = useCallback(() => {
     reset();
     setIsExpand(true);
+    elliMoreRef.current.style.display = "none";
   }, [reset, setIsExpand]);
 
-  const showLess = () => setIsExpand(false);
+  const showLess = () => {
+    setIsExpand(false);
+    elliMoreRef.current.style.display = "inline-block";
+  };
 
-  const truncate = useCallback(
-    (initialize = false) => {
-      const container = ref.current;
-      const elliText = elliLessTextRef.current;
-      const elli = text.current;
+  const truncate = useCallback(() => {
+    const container = ref.current;
+    const elliText = elliLessTextRef.current;
+    const elli = text.current;
 
-      if (!elli.chunks || initialize) {
-        const chunks = elli.cacheChunks ? elli.cacheChunks.concat() : children.split(splitChar);
+    // use memoize cache
+    if (elli.truncText) {
+      elliText.innerHTML = elli.truncText;
+      return;
+    }
 
-        if (!elli.cacheChunks) {
-          elli.cacheChunks = chunks.concat();
-        }
-        elli.chunks = chunks;
-      }
+    if (!elli.chunks) {
+      elli.chunks = children.split(splitChar);
+    }
 
-      if (elli.chunks.length > 1) {
-        elli.lastChunk = elli.chunks.pop();
-        elliText.innerHTML = elli.chunks.join(splitChar) + ellipsisChar;
-      } else {
-        elli.chunks = null;
-      }
+    if (elli.chunks.length > 1) {
+      elli.lastChunk = elli.chunks.pop();
+      elliText.innerHTML = elli.chunks.join(splitChar) + ellipsisChar;
+    } else {
+      elli.chunks = null;
+    }
 
-      if (elli.chunks && container.offsetHeight <= maxElliHeight) {
-        if (expand && elli.isInitialize) {
-          showMore();
-          elli.isInitialize = false;
-        }
-        return;
-      }
+    if (elli.chunks && container.offsetHeight <= maxElliHeight) {
+      elli.truncText = elliText.innerHTML;
+      return;
+    }
 
-      truncate();
-    },
-    [maxElliHeight, children, ellipsisChar, expand, showMore]
-  );
+    truncate();
+  }, [maxElliHeight, children, ellipsisChar]);
 
   const process = useCallback(() => {
     const container = ref.current;
@@ -99,23 +89,21 @@ export default function TextEllipsis({
 
     if (container.offsetHeight > maxElliHeight) {
       elliMore && (elliMore.style.display = "inline-block");
-      truncate(true);
-      setIsOverflow(STATE.overflow);
+      truncate();
+      setIsOverflow(true);
       onElliResult(ELLIPSIS.TRUNCATED);
     } else {
       elliMore && (elliMore.style.display = "inline-block");
-      setIsOverflow(STATE.normal);
+      setIsOverflow(false);
       onElliResult(ELLIPSIS.NOT_TRUNCATED);
     }
   }, [maxElliHeight, truncate, onElliResult]);
 
   useLayoutEffect(() => {
+    // only calculate when showLess
     if (isExpand) {
-      if (text.current.currentLines === lines) {
-        return;
-      }
+      return;
     }
-    text.current.currentLines = lines;
 
     if (elliMoreRef.current) {
       text.current.elliMoreWidth = elliMoreRef.current.offsetWidth;
@@ -125,18 +113,18 @@ export default function TextEllipsis({
 
     reset();
     process();
-  }, [isExpand, lines, reset, process]);
+  }, [reset, process, isExpand]);
 
   return (
     <div ref={ref} className={`ellipsis-box ${className}`} style={ellipsisStyle}>
       <div className="truncate-text">
         <span ref={elliLessTextRef}>{children}</span>
-        {isOverflow === STATE.overflow && !isExpand && (
+        {isOverflow && (
           <span ref={elliMoreRef} className="show-more" onClick={showMore}>
             {ellipsisMore}
           </span>
         )}
-        {isOverflow === STATE.overflow && isExpand && (
+        {isOverflow && isExpand && (
           <span className="show-less" onClick={showLess}>
             {ellipsisLess}
           </span>
