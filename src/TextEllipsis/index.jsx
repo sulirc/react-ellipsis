@@ -6,6 +6,12 @@ export const ELLIPSIS = {
   NOT_TRUNCATED: "NOT_TRUNCATED",
 };
 
+const TEXT_STATE = {
+  idle: "idle",
+  normal: "normal",
+  overflow: "overflow",
+};
+
 export default function TextEllipsis({
   children,
   className,
@@ -17,8 +23,8 @@ export default function TextEllipsis({
   lineHeight = `18px`,
   onElliResult = () => {},
 }) {
-  const [isExpand, setIsExpand] = useState(expand);
-  const [isOverflow, setIsOverflow] = useState(true);
+  const [isExpand, setIsExpand] = useState(false);
+  const [isOverflow, setIsOverflow] = useState(TEXT_STATE.idle);
   const ref = useRef(null);
   const elliLessTextRef = useRef(null);
   const elliMoreRef = useRef(null);
@@ -27,6 +33,7 @@ export default function TextEllipsis({
     cacheChunks: null,
     elliMoreWidth: 0,
     lastChunk: null,
+    isInitialize: true,
   });
   const splitChar = "";
   const ellipsisStyle = {
@@ -35,10 +42,17 @@ export default function TextEllipsis({
     lineHeight,
   };
   const maxElliHeight = parseInt(lineHeight) * lines;
-  const showMore = () => {
+
+  const reset = useCallback(() => {
+    const elliText = elliLessTextRef.current;
+    elliText.innerHTML = children;
+  }, [children]);
+
+  const showMore = useCallback(() => {
     reset();
     setIsExpand(true);
-  };
+  }, [reset, setIsExpand]);
+
   const showLess = () => setIsExpand(false);
 
   const truncate = useCallback(
@@ -64,31 +78,29 @@ export default function TextEllipsis({
       }
 
       if (elli.chunks && container.offsetHeight <= maxElliHeight) {
+        if (expand && elli.isInitialize) {
+          showMore();
+          elli.isInitialize = false;
+        }
         return;
       }
 
       truncate();
     },
-    [maxElliHeight, children, ellipsisChar]
+    [maxElliHeight, children, ellipsisChar, expand, showMore]
   );
 
   const process = useCallback(() => {
     const container = ref.current;
-    console.log(lines, container.offsetHeight, maxElliHeight)
     if (container.offsetHeight > maxElliHeight) {
       truncate(true);
-      setIsOverflow(true);
+      setIsOverflow(TEXT_STATE.overflow);
       onElliResult(ELLIPSIS.TRUNCATED);
     } else {
-      setIsOverflow(false);
+      setIsOverflow(TEXT_STATE.normal);
       onElliResult(ELLIPSIS.NOT_TRUNCATED);
     }
   }, [maxElliHeight, truncate, onElliResult, lines]);
-
-  const reset = useCallback(() => {
-    const elliText = elliLessTextRef.current;
-    elliText.innerHTML = children;
-  }, [children]);
 
   useLayoutEffect(() => {
     if (isExpand) {
@@ -99,7 +111,7 @@ export default function TextEllipsis({
     if (elliMoreRef.current) {
       text.current.elliMoreWidth = elliMoreRef.current.offsetWidth;
     }
-    
+
     process();
   }, [children, isOverflow, isExpand, lines, process, reset]);
 
@@ -107,12 +119,12 @@ export default function TextEllipsis({
     <div ref={ref} className={`ellipsis-box ${className}`} style={ellipsisStyle}>
       <div className="truncate-text">
         <span ref={elliLessTextRef}>{children}</span>
-        {isOverflow && !isExpand && (
+        {isOverflow === TEXT_STATE.overflow && !isExpand && (
           <span ref={elliMoreRef} className="show-more" onClick={showMore}>
             {ellipsisMore}
           </span>
         )}
-        {isOverflow && isExpand && (
+        {isOverflow === TEXT_STATE.overflow && isExpand && (
           <span className="show-less" onClick={showLess}>
             {ellipsisLess}
           </span>
