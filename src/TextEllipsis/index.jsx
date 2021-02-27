@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef, useCallback } from "react";
+import React, { useState, useLayoutEffect, useRef, useCallback, useEffect } from "react";
 import "./index.scss";
 
 export const ELLIPSIS = {
@@ -6,7 +6,7 @@ export const ELLIPSIS = {
   NOT_TRUNCATED: "NOT_TRUNCATED",
 };
 
-const TEXT_STATE = {
+const STATE = {
   idle: "idle",
   normal: "normal",
   overflow: "overflow",
@@ -24,7 +24,7 @@ export default function TextEllipsis({
   onElliResult = () => {},
 }) {
   const [isExpand, setIsExpand] = useState(false);
-  const [isOverflow, setIsOverflow] = useState(TEXT_STATE.idle);
+  const [isOverflow, setIsOverflow] = useState(STATE.idle);
   const ref = useRef(null);
   const elliLessTextRef = useRef(null);
   const elliMoreRef = useRef(null);
@@ -34,6 +34,7 @@ export default function TextEllipsis({
     elliMoreWidth: 0,
     lastChunk: null,
     isInitialize: true,
+    currentLines: lines,
   });
   const splitChar = "";
   const ellipsisStyle = {
@@ -92,39 +93,50 @@ export default function TextEllipsis({
 
   const process = useCallback(() => {
     const container = ref.current;
+    const elliMore = elliMoreRef.current;
+
+    elliMore && (elliMore.style.display = "none");
+
     if (container.offsetHeight > maxElliHeight) {
+      elliMore && (elliMore.style.display = "inline-block");
       truncate(true);
-      setIsOverflow(TEXT_STATE.overflow);
+      setIsOverflow(STATE.overflow);
       onElliResult(ELLIPSIS.TRUNCATED);
     } else {
-      setIsOverflow(TEXT_STATE.normal);
+      elliMore && (elliMore.style.display = "inline-block");
+      setIsOverflow(STATE.normal);
       onElliResult(ELLIPSIS.NOT_TRUNCATED);
     }
-  }, [maxElliHeight, truncate, onElliResult, lines]);
+  }, [maxElliHeight, truncate, onElliResult]);
 
   useLayoutEffect(() => {
     if (isExpand) {
-      return;
+      if (text.current.currentLines === lines) {
+        return;
+      }
     }
-    reset();
+    text.current.currentLines = lines;
 
     if (elliMoreRef.current) {
       text.current.elliMoreWidth = elliMoreRef.current.offsetWidth;
+    } else {
+      text.current.elliMoreWidth = 0;
     }
 
+    reset();
     process();
-  }, [children, isOverflow, isExpand, lines, process, reset]);
+  }, [isExpand, lines, reset, process]);
 
   return (
     <div ref={ref} className={`ellipsis-box ${className}`} style={ellipsisStyle}>
       <div className="truncate-text">
         <span ref={elliLessTextRef}>{children}</span>
-        {isOverflow === TEXT_STATE.overflow && !isExpand && (
+        {isOverflow === STATE.overflow && !isExpand && (
           <span ref={elliMoreRef} className="show-more" onClick={showMore}>
             {ellipsisMore}
           </span>
         )}
-        {isOverflow === TEXT_STATE.overflow && isExpand && (
+        {isOverflow === STATE.overflow && isExpand && (
           <span className="show-less" onClick={showLess}>
             {ellipsisLess}
           </span>
