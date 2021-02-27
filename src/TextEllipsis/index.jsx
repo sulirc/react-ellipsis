@@ -9,14 +9,14 @@ export const ELLIPSIS = {
 export default function TextEllipsis({
   children,
   className,
-  isExpand,
+  expand,
   ellipsisChar = "...",
   ellipsisMore = "Show More",
   ellipsisLess = "Show Less",
   lines,
   lineHeight = `18px`,
-  onResult = () => {},
 }) {
+  const [isExpand, setIsExpand] = useState(expand);
   const ref = useRef(null);
   const elliTextRef = useRef(null);
   const elliMoreRef = useRef(null);
@@ -32,14 +32,13 @@ export default function TextEllipsis({
     lineHeight,
   };
   const maxElliHeight = parseInt(lineHeight) * lines;
+  const showMore = () => setIsExpand(true);
+  const showLess = () => setIsExpand(false);
 
   const process = () => {
     const container = ref.current;
     if (container.offsetHeight > maxElliHeight) {
-      console.log("overflow");
       truncate();
-    } else {
-      console.log("normal");
     }
   };
   const truncate = () => {
@@ -49,7 +48,6 @@ export default function TextEllipsis({
     if (!elli.chunks) {
       elli.chunks = children.split(splitChar);
     }
-    console.log(elli);
     if (elli.chunks.length > 1) {
       elli.lastChunk = elli.chunks.pop();
       elliText.innerHTML = elli.chunks.join(splitChar) + ellipsisChar;
@@ -57,28 +55,50 @@ export default function TextEllipsis({
       elli.chunks = null;
     }
 
-    if (elli.chunks) {
-      if (container.offsetHeight <= maxElliHeight) {
-        console.log("It fits");
-        return;
-      }
+    if (elli.chunks && container.offsetHeight <= maxElliHeight) {
+      return;
     }
 
     truncate();
   };
 
   useLayoutEffect(() => {
-    text.current.elliMoreWidth = elliMoreRef.current.offsetWidth;
+    if (isExpand) {
+      return;
+    }
+    try {
+      text.current.elliMoreWidth = elliMoreRef.current.offsetWidth;
+    } catch (err) {
+      text.current.elliMoreWidth = 0;
+    }
 
     process();
-  }, []);
+  }, [isExpand]);
 
   return (
-    <p ref={ref} className={`ellipsis-box ${className}`} style={ellipsisStyle}>
-      <span ref={elliTextRef}>{children}</span>
-      <span ref={elliMoreRef} className="show-more">
-        {ellipsisMore}
-      </span>
-    </p>
+    <div ref={ref} className={`ellipsis-box ${className}`} style={ellipsisStyle}>
+      <div
+        className="truncate-text"
+        style={{
+          display: isExpand ? "none" : "block",
+        }}
+      >
+        <span ref={elliTextRef}>{children}</span>
+        <span ref={elliMoreRef} className="show-more" onClick={showMore}>
+          {ellipsisMore}
+        </span>
+      </div>
+      <div
+        className="more-text"
+        style={{
+          display: isExpand ? "block" : "none",
+        }}
+      >
+        <span>{children}</span>
+        <span className="show-less" onClick={showLess}>
+          {ellipsisLess}
+        </span>
+      </div>
+    </div>
   );
 }

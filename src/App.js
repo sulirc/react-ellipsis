@@ -8,17 +8,11 @@ automatically compiled if imported with the extension .scss or .sass. To share v
 imports. For example, src/App.scss and other component style files could include @import "./shared.scss"; with variable definitions.`;
 
 function App() {
-  const [isExpand, setIsExpand] = useState(false);
+  // const [isExpand, setIsExpand] = useState(true);
 
   return (
     <div className="box">
-      <TextEllipsis
-        className="ellipsis-demo"
-        lines={5}
-        isExpand={isExpand}
-        // ellipsisMore={<span onClick={() => setIsExpand(true)}>Show More</span>}
-        // ellipsisLess={<span onClick={() => setIsExpand(false)}>Show less</span>}
-      >
+      <TextEllipsis className="ellipsis-demo" lines={5} expand>
         {text}
       </TextEllipsis>
       {/* <TextEllipsis

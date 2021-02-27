@@ -1,10 +1,17 @@
 .ellipsis-box {
-  .elli {
-    background: grey;
-  }
+  position: relative;
+  transition: all ease .1s;
   .show-more {
     display: inline-block;
     background: rgb(231, 119, 231);
     padding-left: 5px;
+    cursor: pointer;
+  }
+  .show-less {
+    position: absolute;
+    right: 0;
+    display: block;
+    background: rgb(92, 106, 233);
+    cursor: pointer;
   }
 }
