@@ -1,14 +1,25 @@
 .ellipsis-box {
   position: relative;
   transition: all ease 0.1s;
-  background: aliceblue;
-  .show-more {
-    display: inline-block;
-    cursor: pointer;
-  }
-  .show-less {
-    position: absolute;
-    right: 0;
-    cursor: pointer;
+  font-size: 15px;
+
+  .truncate-text {
+    font-size: inherit;
+
+    .text-box {
+      font-size: inherit;
+    }
+    .show-more {
+      display: inline-block;
+      font-size: inherit;
+      vertical-align: top;
+      cursor: pointer;
+    }
+    .show-less {
+      display: block;
+      position: absolute;
+      right: 0;
+      cursor: pointer;
+    }
   }
 }

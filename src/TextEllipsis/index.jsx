@@ -13,6 +13,7 @@ export default function TextEllipsis({
   ellipsisMore = "Show More",
   ellipsisLess = "Show Less",
   lines,
+  fontSize = `15px`,
   lineHeight = `18px`,
   onElliResult = () => {},
 }) {
@@ -23,7 +24,6 @@ export default function TextEllipsis({
   const elliMoreRef = useRef(null);
   const text = useRef({
     chunks: null,
-    elliMoreWidth: 0,
     lastChunk: null,
     truncText: null,
   });
@@ -31,6 +31,7 @@ export default function TextEllipsis({
   const ellipsisStyle = {
     width: "100%",
     wordWrap: "break-word",
+    fontSize,
     lineHeight,
     paddingBottom: isExpand ? lineHeight : 0
   };
@@ -105,13 +106,11 @@ export default function TextEllipsis({
     if (isExpand) {
       return;
     }
-
-    if (elliMoreRef.current) {
-      text.current.elliMoreWidth = elliMoreRef.current.offsetWidth;
-    } else {
-      text.current.elliMoreWidth = 0;
+    // make sure elliMore node should exist.
+    if (!elliMoreRef.current) {
+      console.warn('elliMoreRef not exists')
+      return;
     }
-
     reset();
     process();
   }, [reset, process, isExpand]);
