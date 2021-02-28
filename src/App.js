@@ -9,7 +9,7 @@ const Text = {
   en2: 'Well, anytime a React component prop or state changes, it’s going to get re-rendered. And that React component that has changed, will force any other children React components to re-render as well.'
 };
 
-const defaultLines = "l";
+const defaultLines = "m";
 const LINES = {
   s: 3,
   m: 5,
@@ -35,10 +35,10 @@ function App() {
           onElliResult={handleOnElliResult}
           lineHeight="20px"
           ellipsisChar="... "
-          ellipsisMore={<div className="my-more-action">展开看更多 👇</div>}
-          ellipsisLess={<div className="my-less-action">收起来更美 👏</div>}
+          ellipsisMore={<div className="my-more-action">👇 展开看更多</div>}
+          ellipsisLess={<div className="my-less-action">👏 收起来更美</div>}
         >
-          {Text.jp}
+          {Text.zh}
         </TextEllipsis>
       </div>
     </>
