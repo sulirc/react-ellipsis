@@ -6,7 +6,7 @@ export const ELLIPSIS = {
   NOT_TRUNCATED: "NOT_TRUNCATED",
 };
 
-export default function TextEllipsis({
+export default React.memo(function TextEllipsis({
   children,
   className,
   ellipsisChar = "...",
@@ -33,7 +33,7 @@ export default function TextEllipsis({
     wordWrap: "break-word",
     fontSize,
     lineHeight,
-    paddingBottom: isExpand ? lineHeight : 0
+    paddingBottom: isExpand ? lineHeight : 0,
   };
   const maxElliHeight = parseInt(lineHeight) * lines;
 
@@ -108,15 +108,22 @@ export default function TextEllipsis({
     }
     // make sure elliMore node should exist.
     if (!elliMoreRef.current) {
-      console.warn('elliMoreRef not exists')
+      console.warn("elliMoreRef not exists");
       return;
     }
+    console.log("elliMoreRef exists", elliMoreRef.current);
     reset();
     process();
   }, [reset, process, isExpand]);
 
   return (
-    <div ref={ref} className={`ellipsis-box with-${isExpand ? "expand" : "collapse"} ${className}`} style={ellipsisStyle}>
+    <div
+      ref={ref}
+      className={`ellipsis-box with-${
+        isExpand ? "expand" : "collapse"
+      } ${className}`}
+      style={ellipsisStyle}
+    >
       <div className="truncate-text">
         <span ref={elliLessTextRef}>{children}</span>
         {isOverflow && (
@@ -132,4 +139,4 @@ export default function TextEllipsis({
       </div>
     </div>
   );
-}
+});
