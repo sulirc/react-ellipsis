@@ -42,6 +42,12 @@ export default React.memo(function TextEllipsis({
     const elliText = elliLessTextRef.current;
     elliText.innerHTML = children;
   }, [children]);
+  
+  const resetToTrunc = useCallback(() => {
+    const elliText = elliLessTextRef.current;
+    const elli = text.current;
+    elliText.innerHTML = elli.truncText;
+  }, [children]);
 
   const showMore = useCallback(() => {
     reset();
@@ -49,10 +55,11 @@ export default React.memo(function TextEllipsis({
     elliMoreRef.current.style.display = 'none';
   }, [reset, setIsExpand]);
 
-  const showLess = () => {
+  const showLess = useCallback(() => {
+    resetToTrunc();
     setIsExpand(false);
     elliMoreRef.current.style.display = 'inline-block';
-  };
+  }, [resetToTrunc, setIsExpand]);
 
   const truncate = useCallback(() => {
     const container = ref.current;
@@ -104,8 +111,7 @@ export default React.memo(function TextEllipsis({
   }, [maxElliHeight, truncate, onElliResult]);
 
   useLayoutEffect(() => {
-    // only calculate when showLess
-    if (isExpand) {
+    if (isTruncDone) {
       return;
     }
 
@@ -117,7 +123,7 @@ export default React.memo(function TextEllipsis({
 
     reset();
     process();
-  }, [isExpand, reset, process]);
+  }, [isTruncDone, reset, process]);
 
   if (!children) {
     return;
@@ -141,9 +147,7 @@ export default React.memo(function TextEllipsis({
       style={ellipsisStyle}
     >
       <div className="truncate-text">
-        <span className="text-box" ref={elliLessTextRef}>
-          {children}
-        </span>
+        <span className="text-box" ref={elliLessTextRef} />
         {isOverflow && (
           <div
             ref={elliMoreRef}
