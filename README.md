@@ -1,6 +1,6 @@
 # react-ellipsis
 
-一言以蔽之，为了应付常见的此类需求（**超出5行情况出现see more，see more保持在第五行行末尾，即段落右下角**），特意写了这个 Demo 🤣。
+一言以蔽之，为了应付常见的此类需求（**超出 5 行情况出现 see more，see more 保持在第五行行末尾，即段落右下角**），特意写了这个 Demo 🤣。
 
 ```jsx
 <TextEllipsis
