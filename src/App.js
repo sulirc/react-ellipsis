@@ -1,5 +1,5 @@
 import React from "react";
-import TextEllipsis from "./TextEllipsis";
+import TextEllipsis from "./lib/TextEllipsis";
 import "./App.scss";
 
 const Text = {
@@ -35,8 +35,8 @@ function App() {
           onElliResult={handleOnElliResult}
           lineHeight="20px"
           ellipsisChar="... "
-          ellipsisMore={<div className="my-more-action">👇 展开看更多</div>}
-          ellipsisLess={<div className="my-less-action">👏 收起来更美</div>}
+          showMoreJsx={<div className="my-more-action">👇 展开看更多</div>}
+          showLessJsx={<div className="my-less-action">👏 收起来更美</div>}
         >
           {Text.zh}
         </TextEllipsis>

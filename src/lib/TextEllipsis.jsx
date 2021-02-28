@@ -1,21 +1,21 @@
-import React, { useState, useLayoutEffect, useRef, useCallback } from 'react';
-import './index.scss';
+import React, { useState, useLayoutEffect, useRef, useCallback } from "react";
+import "./TextEllipsis.scss";
 
 export const ELLIPSIS = {
-  TRUNCATED: 'TRUNCATED',
-  NOT_TRUNCATED: 'NOT_TRUNCATED'
+  TRUNCATED: "TRUNCATED",
+  NOT_TRUNCATED: "NOT_TRUNCATED",
 };
 
-export default React.memo(function TextEllipsis({
+function TextEllipsis({
   children,
   className,
-  ellipsisChar = '...',
-  ellipsisMore = 'Show More',
-  ellipsisLess = 'Show Less',
+  ellipsisChar = "...",
+  showMoreJsx = "Show More",
+  showLessJsx = "Show Less",
   lines,
-  fontSize = '15px',
-  lineHeight = '18px',
-  onElliResult = () => {}
+  fontSize = "15px",
+  lineHeight = "18px",
+  onElliResult = () => {},
 }) {
   const [isExpand, setIsExpand] = useState(false);
   const [isOverflow, setIsOverflow] = useState(true);
@@ -26,15 +26,15 @@ export default React.memo(function TextEllipsis({
   const text = useRef({
     chunks: null,
     lastChunk: null,
-    truncText: null
+    truncText: null,
   });
-  const splitChar = '';
+  const splitChar = "";
   const ellipsisStyle = {
-    width: '100%',
-    wordWrap: 'break-word',
+    width: "100%",
+    wordWrap: "break-word",
     fontSize,
     lineHeight,
-    paddingBottom: isExpand ? lineHeight : 0
+    paddingBottom: isExpand ? lineHeight : 0,
   };
   const maxElliHeight = parseInt(lineHeight) * lines;
 
@@ -42,7 +42,7 @@ export default React.memo(function TextEllipsis({
     const elliText = elliLessTextRef.current;
     elliText.innerHTML = children;
   }, [children]);
-  
+
   const resetToTrunc = useCallback(() => {
     const elliText = elliLessTextRef.current;
     const elli = text.current;
@@ -52,13 +52,13 @@ export default React.memo(function TextEllipsis({
   const showMore = useCallback(() => {
     reset();
     setIsExpand(true);
-    elliMoreRef.current.style.display = 'none';
+    elliMoreRef.current.style.display = "none";
   }, [reset, setIsExpand]);
 
   const showLess = useCallback(() => {
     resetToTrunc();
     setIsExpand(false);
-    elliMoreRef.current.style.display = 'inline-block';
+    elliMoreRef.current.style.display = "inline-block";
   }, [resetToTrunc, setIsExpand]);
 
   const truncate = useCallback(() => {
@@ -96,15 +96,15 @@ export default React.memo(function TextEllipsis({
     const container = ref.current;
     const elliMore = elliMoreRef.current;
 
-    elliMore && (elliMore.style.display = 'none');
+    elliMore && (elliMore.style.display = "none");
 
     if (container.offsetHeight > maxElliHeight) {
-      elliMore && (elliMore.style.display = 'inline-block');
+      elliMore && (elliMore.style.display = "inline-block");
       truncate();
       setIsOverflow(true);
       onElliResult(ELLIPSIS.TRUNCATED);
     } else {
-      elliMore && (elliMore.style.display = 'inline-block');
+      elliMore && (elliMore.style.display = "inline-block");
       setIsOverflow(false);
       onElliResult(ELLIPSIS.NOT_TRUNCATED);
     }
@@ -117,7 +117,7 @@ export default React.memo(function TextEllipsis({
 
     // make sure elliMore node should exist.
     if (!elliMoreRef.current) {
-      console.warn('elliMoreRef not exists');
+      console.warn("elliMoreRef not exists");
       return;
     }
 
@@ -131,18 +131,18 @@ export default React.memo(function TextEllipsis({
 
   const elliMoreStyle = isTruncDone
     ? {
-        float: 'right',
-        display: 'block'
+        float: "right",
+        display: "block",
       }
     : {
-        display: 'inline-block'
+        display: "inline-block",
       };
 
   return (
     <div
       ref={ref}
       className={`ellipsis-box with-${
-        isExpand ? 'expand' : 'collapse'
+        isExpand ? "expand" : "collapse"
       } ${className}`}
       style={ellipsisStyle}
     >
@@ -155,15 +155,17 @@ export default React.memo(function TextEllipsis({
             className="show-more"
             onClick={showMore}
           >
-            {ellipsisMore}
+            {showMoreJsx}
           </div>
         )}
         {isOverflow && isExpand && (
           <div className="show-less" onClick={showLess}>
-            {ellipsisLess}
+            {showLessJsx}
           </div>
         )}
       </div>
     </div>
   );
-});
+}
+
+export default React.memo(TextEllipsis);

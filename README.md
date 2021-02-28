@@ -1,6 +1,22 @@
 # react-ellipsis
 
-一言以蔽之，为了应付常见的此类需求，特意写了这个 Demo 🤣。
+一言以蔽之，为了应付常见的此类需求（**超出5行情况出现see more，see more保持在第五行行末尾，即段落右下角**），特意写了这个 Demo 🤣。
+
+```jsx
+<TextEllipsis
+  className="ellipsis-demo"
+  lines={LINES[defaultLines]}
+  onElliResult={handleOnElliResult}
+  lineHeight="20px"
+  ellipsisChar="... "
+  showMoreJsx={<div className="my-more-action">👇 展开看更多</div>}
+  showLessJsx={<div className="my-less-action">👏 收起来更美</div>}
+>
+  {Text.zh}
+</TextEllipsis>
+```
+
+效果：
 
 <img src="./images/elli_intro.gif" />
 
