@@ -87,22 +87,18 @@ function TextEllipsis(props) {
     const box = boxRef.current;
 
     function retryToGetFitText() {
-      if (cache.textTrunc) {
-        return;
-      }
-
       if (cache.chunks.length === 0) {
         cache.chunks = children.split("");
       }
 
-      if (text.offsetHeight > maxOffsetHeight) {
-        cache.chunks.pop();
-        box.innerHTML = cache.chunks.join("") + ellipsisChar;
-      } else {
-        cache.textTrunc = cache.chunks.join("") + ellipsisChar;
+      while (!cache.textTrunc) {
+        if (text.offsetHeight > maxOffsetHeight) {
+          cache.chunks.pop();
+          box.innerHTML = cache.chunks.join("") + ellipsisChar;
+        } else {
+          cache.textTrunc = cache.chunks.join("") + ellipsisChar;
+        }
       }
-
-      retryToGetFitText();
     }
 
     clearCache();
