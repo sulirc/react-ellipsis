@@ -1,28 +1,66 @@
 .select-cantainer {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   margin: 10px 20px;
   padding: 10px;
-  border: 1px solid #eee;
-  
+  font-family: serif;
+
   .select {
-    display: inline-flex;
-    justify-content: center;
-    padding: 4px 10px;
+    display: block;
     margin-left: 10px;
+    margin-top: 6px;
     border-radius: 4px;
-    font-weight: bold;
-    font-family: fantasy;
+    font-size: 15px;
+
+    label {
+      display: inline-block;
+      width: 100px;
+      text-align: right;
+    }
+
+    select {
+      width: 120px;
+      margin-left: 8px;
+      padding: 4px 10px;
+      font-family: inherit;
+    }
+    input {
+      width: 120px;
+      margin-left: 8px;
+      vertical-align: middle;
+      font-family: inherit;
+    }
   }
 }
 
 .box {
+  position: relative;
   width: 375px;
   margin: 0 auto;
   border: 1px solid blue;
   padding: 6px;
   font-size: 14px;
+  .count-wrapper {
+    position: absolute;
+    right: 4px;
+    top: 0;
+    transform: translate(0, -50%);
+    z-index: 1;
+    .count {
+      display: inline-block;
+      padding: 0 6px;
+      margin-left: 4px;
+      height: 20px;
+      line-height: 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #fff;
+      border: 1px solid red;
+      background-color: rgb(241, 68, 68);
+    }
+  }
   .ellipsis-demo {
     background-color: aliceblue;
   }

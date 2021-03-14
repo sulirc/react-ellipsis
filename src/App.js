@@ -11,7 +11,7 @@ const Text = {
 };
 
 const defaultLineHeight = "20";
-const defaultFontSize = "16";
+const defaultFontSize = "15";
 const defaultLineType = "m";
 const LINES = {
   s: 3,
@@ -31,22 +31,29 @@ function App() {
   return (
     <>
       <div className="select-cantainer">
-        <select className="select choose-lines" defaultValue={defaultLineType} onChange={(e) => setLines(LINES[e.target.value])}>
-          {Object.keys(LINES).map((type) => (
-            <option key={type} value={type}>
-              {LINES[type]} 行
-            </option>
-          ))}
-        </select>
-        <select className="select choose-text" defaultValue="zh" onChange={(e) => setText(Text[e.target.value])}>
-          {Object.keys(Text).map((type) => (
-            <option key={type} value={type}>
-              {type.toUpperCase()} 文本
-            </option>
-          ))}
-        </select>
+        <div className="select choose-lines">
+          <label htmlFor="line">选择行数</label>
+          <select name="line" defaultValue={defaultLineType} onChange={(e) => setLines(LINES[e.target.value])}>
+            {Object.keys(LINES).map((type) => (
+              <option key={type} value={type}>
+                {LINES[type]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="select choose-text">
+          <label htmlFor="text">选择文本</label>
+          <select name="text" defaultValue="zh" onChange={(e) => setText(Text[e.target.value])}>
+            {Object.keys(Text).map((type) => (
+              <option key={type} value={type}>
+                {type.toUpperCase()}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="select choose-lineheight">
-          <label htmlFor="lineHeight">LineHeight({lineHeight}px)</label>
+          <label htmlFor="lineHeight">选择行高</label>
           <input
             type="range"
             id="lineHeight"
@@ -59,7 +66,7 @@ function App() {
           />
         </div>
         <div className="select choose-lineheight">
-          <label htmlFor="fontSize">FontSize({fontSize}px)</label>
+          <label htmlFor="fontSize">选择字体大小</label>
           <input
             type="range"
             id="fontSize"
@@ -73,6 +80,10 @@ function App() {
         </div>
       </div>
       <div className="box">
+        <div className="count-wrapper">
+          <span className="count">{lineHeight}px</span>
+          <span className="count">{fontSize}px</span>
+        </div>
         <TextEllipsis
           className="ellipsis-demo"
           lines={lines}
