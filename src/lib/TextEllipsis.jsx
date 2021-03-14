@@ -1,9 +1,19 @@
-import React, { useState, useLayoutEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./TextEllipsis.scss";
 
 export const ELLIPSIS = {
   TRUNCATED: "TRUNCATED",
   NOT_TRUNCATED: "NOT_TRUNCATED",
+};
+
+const MoreStyle = {
+  Float: {
+    float: "right",
+    display: "block",
+  },
+  Normal: {
+    display: "inline-block",
+  },
 };
 
 function TextEllipsis({
@@ -26,6 +36,7 @@ function TextEllipsis({
   const text = useRef({
     chunks: null,
     lastChunk: null,
+    currentText: null,
     truncText: null,
   });
   const splitChar = "";
@@ -39,14 +50,11 @@ function TextEllipsis({
   const maxElliHeight = parseInt(lineHeight) * lines;
 
   const reset = useCallback(() => {
-    const elliText = textRef.current;
-    elliText.innerHTML = children;
+    textRef.current.innerHTML = children;
   }, [children]);
 
   const resetToTrunc = useCallback(() => {
-    const elliText = textRef.current;
-    const elli = text.current;
-    elliText.innerHTML = elli.truncText;
+    textRef.current.innerHTML = text.current.truncText;
   }, []);
 
   const showMore = useCallback(() => {
@@ -91,41 +99,44 @@ function TextEllipsis({
     truncate();
   }, [maxElliHeight, children, ellipsisChar]);
 
+  const changeMoreVisible = (visible) => {
+    if (!moreRef.current) {
+      return;
+    }
+    moreRef.current.style.display = visible ? "inline-block" : "none";
+  };
+
   const process = useCallback(() => {
-    const container = ref.current;
-    const elliMore = moreRef.current;
+    text.current.currentText = children;
 
-    elliMore && (elliMore.style.display = "none");
+    changeMoreVisible(false);
 
-    if (container.offsetHeight > maxElliHeight) {
-      elliMore && (elliMore.style.display = "inline-block");
+    if (ref.current.offsetHeight > maxElliHeight) {
+      changeMoreVisible(true);
       truncate();
       setIsOverflow(true);
       onElliResult(ELLIPSIS.TRUNCATED);
     } else {
-      elliMore && (elliMore.style.display = "inline-block");
+      changeMoreVisible(true);
       setIsOverflow(false);
       onElliResult(ELLIPSIS.NOT_TRUNCATED);
     }
-  }, [maxElliHeight, truncate, onElliResult]);
+  }, [maxElliHeight, truncate, onElliResult, children]);
 
-  useLayoutEffect(() => {
-    if (isTruncDone || !moreRef.current) {
+  useEffect(() => {
+    if (isTruncDone) {
       return;
     }
 
     reset();
     process();
-  }, [isTruncDone, reset, process]);
+  }, [isTruncDone, reset, process, children]);
 
-  const elliMoreStyle = isTruncDone
-    ? {
-        float: "right",
-        display: "block",
-      }
-    : {
-        display: "inline-block",
-      };
+  useEffect(() => {
+    console.log("text change old -> ", text.current.currentText);
+    console.log("text change new -> ", children);
+    // setIsTruncDone(false);
+  }, [children]);
 
   return (
     <div
@@ -140,7 +151,7 @@ function TextEllipsis({
         {isOverflow && (
           <div
             ref={moreRef}
-            style={elliMoreStyle}
+            style={isTruncDone ? MoreStyle.Float : MoreStyle.Normal}
             className="show-more"
             onClick={showMore}
           >

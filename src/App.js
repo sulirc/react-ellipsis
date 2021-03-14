@@ -26,14 +26,14 @@ function App() {
   useEffect(() => {
     const timer = setInterval(() => {
       setText(Math.random() + Text.zh);
-    }, 10000);
+    }, 3 * 1000);
 
     return () => {
       clearInterval(timer);
     };
   }, []);
 
-  console.log("current text", text);
+  // console.log("current text", text);
 
   return (
     <>
