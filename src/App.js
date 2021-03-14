@@ -19,21 +19,28 @@ const LINES = {
   xxxl: 100,
 };
 
+let tryCount = 0;
+
+const MAX_TRY_COUNT = 2;
+const CHG_INTERVAL = 3 * 1000;
+
 function App() {
   const [text, setText] = useState(Text.zh);
   const handleOnElliResult = (status) => console.log(status);
 
   useEffect(() => {
     const timer = setInterval(() => {
+      if (tryCount > MAX_TRY_COUNT) {
+        return;
+      }
       setText(Math.random() + Text.zh);
-    }, 3 * 1000);
+      tryCount++;
+    }, CHG_INTERVAL);
 
     return () => {
       clearInterval(timer);
     };
   }, []);
-
-  // console.log("current text", text);
 
   return (
     <>

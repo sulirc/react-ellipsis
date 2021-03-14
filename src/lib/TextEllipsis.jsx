@@ -36,8 +36,8 @@ function TextEllipsis({
   const text = useRef({
     chunks: null,
     lastChunk: null,
-    currentText: null,
-    truncText: null,
+    currentText: "",
+    truncText: "",
   });
   const splitChar = "";
   const ellipsisStyle = {
@@ -51,6 +51,11 @@ function TextEllipsis({
 
   const reset = useCallback(() => {
     textRef.current.innerHTML = children;
+
+    text.current.currentText = children;
+    text.current.truncText = "";
+    text.current.chunks = null;
+    text.current.lastChunk = null;
   }, [children]);
 
   const resetToTrunc = useCallback(() => {
@@ -60,38 +65,35 @@ function TextEllipsis({
   const showMore = useCallback(() => {
     reset();
     setIsExpand(true);
-    moreRef.current.style.display = "none";
   }, [reset, setIsExpand]);
 
   const showLess = useCallback(() => {
     resetToTrunc();
     setIsExpand(false);
-    moreRef.current.style.display = "inline-block";
   }, [resetToTrunc, setIsExpand]);
 
   const truncate = useCallback(() => {
     const container = ref.current;
-    const elliText = textRef.current;
-    const elli = text.current;
 
-    if (elli.truncText) {
-      elliText.innerHTML = elli.truncText;
+    if (text.current.truncText) {
+      textRef.current.innerHTML = text.current.truncText;
       return;
     }
 
-    if (!elli.chunks) {
-      elli.chunks = children.split(splitChar);
+    if (!text.current.chunks) {
+      text.current.chunks = children.split(splitChar);
     }
 
-    if (elli.chunks.length > 1) {
-      elli.lastChunk = elli.chunks.pop();
-      elliText.innerHTML = elli.chunks.join(splitChar) + ellipsisChar;
+    if (text.current.chunks.length > 1) {
+      text.current.lastChunk = text.current.chunks.pop();
+      textRef.current.innerHTML =
+        text.current.chunks.join(splitChar) + ellipsisChar;
     } else {
-      elli.chunks = null;
+      text.current.chunks = null;
     }
 
-    if (elli.chunks && container.offsetHeight <= maxElliHeight) {
-      elli.truncText = elliText.innerHTML;
+    if (text.current.chunks && container.offsetHeight <= maxElliHeight) {
+      text.current.truncText = textRef.current.innerHTML;
       setIsTruncDone(true);
       return;
     }
@@ -99,44 +101,43 @@ function TextEllipsis({
     truncate();
   }, [maxElliHeight, children, ellipsisChar]);
 
-  const changeMoreVisible = (visible) => {
-    if (!moreRef.current) {
-      return;
-    }
-    moreRef.current.style.display = visible ? "inline-block" : "none";
-  };
-
   const process = useCallback(() => {
-    text.current.currentText = children;
-
-    changeMoreVisible(false);
+    reset();
 
     if (ref.current.offsetHeight > maxElliHeight) {
-      changeMoreVisible(true);
       truncate();
       setIsOverflow(true);
       onElliResult(ELLIPSIS.TRUNCATED);
     } else {
-      changeMoreVisible(true);
       setIsOverflow(false);
       onElliResult(ELLIPSIS.NOT_TRUNCATED);
     }
-  }, [maxElliHeight, truncate, onElliResult, children]);
+  }, [reset, maxElliHeight, truncate, onElliResult]);
 
   useEffect(() => {
-    if (isTruncDone) {
-      return;
-    }
-
-    reset();
     process();
-  }, [isTruncDone, reset, process, children]);
+  }, [children, reset, process]);
 
   useEffect(() => {
-    console.log("text change old -> ", text.current.currentText);
-    console.log("text change new -> ", children);
-    // setIsTruncDone(false);
-  }, [children]);
+    console.log('watch -> ', isOverflow, isExpand);
+  })
+
+  const lessJsx = (
+    <div className="show-less" onClick={showLess}>
+      {showLessJsx}
+    </div>
+  );
+
+  const moreJsx = (
+    <div
+      ref={moreRef}
+      style={isTruncDone ? MoreStyle.Float : MoreStyle.Normal}
+      className="show-more"
+      onClick={showMore}
+    >
+      {showMoreJsx}
+    </div>
+  );
 
   return (
     <div
@@ -148,21 +149,7 @@ function TextEllipsis({
     >
       <div className="truncate-text">
         <span className="text-box" ref={textRef} />
-        {isOverflow && (
-          <div
-            ref={moreRef}
-            style={isTruncDone ? MoreStyle.Float : MoreStyle.Normal}
-            className="show-more"
-            onClick={showMore}
-          >
-            {showMoreJsx}
-          </div>
-        )}
-        {isOverflow && isExpand && (
-          <div className="show-less" onClick={showLess}>
-            {showLessJsx}
-          </div>
-        )}
+        {isOverflow && (isExpand ? lessJsx : moreJsx)}
       </div>
     </div>
   );
