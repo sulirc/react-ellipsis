@@ -1,25 +1,22 @@
-.ellipsis-box {
+.js-ellipsis-box {
   position: relative;
   transition: all ease 0.1s;
-  font-size: 15px;
 
-  .truncate-text {
+  .origin-text {
+  }
+  .text-box {
+    display: inline;
     font-size: inherit;
-
-    .text-box {
-      font-size: inherit;
-    }
-    .show-more {
-      display: inline-block;
-      font-size: inherit;
-      vertical-align: top;
-      cursor: pointer;
-    }
-    .show-less {
-      display: block;
-      position: absolute;
-      right: 0;
-      cursor: pointer;
-    }
+  }
+  .show-more {
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+  }
+  .show-less {
+    display: block;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
   }
 }

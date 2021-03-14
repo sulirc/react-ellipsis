@@ -21,7 +21,7 @@ const LINES = {
 
 let tryCount = 0;
 
-const MAX_TRY_COUNT = 2;
+const MAX_TRY_COUNT = 5;
 const CHG_INTERVAL = 3 * 1000;
 
 function App() {
@@ -30,10 +30,15 @@ function App() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (tryCount > MAX_TRY_COUNT) {
+      if (tryCount >= MAX_TRY_COUNT) {
         return;
       }
-      setText(Math.random() + Text.zh);
+      if (tryCount % 2 === 0) {
+        setText(Math.random() + Text.zh.slice(0, 10));
+      } else {
+        setText(Math.random() + Text.zh);
+      }
+
       tryCount++;
     }, CHG_INTERVAL);
 
