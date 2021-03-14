@@ -117,7 +117,7 @@ function TextEllipsis(props) {
       setExpand(true);
       setOverflow(false);
     }
-  }, [children, maxOffsetHeight, ellipsisChar]);
+  }, [children, maxOffsetHeight, ellipsisChar, fontSize]);
 
   return (
     <div className={`js-ellipsis-box ${className}`} style={rootStyle}>

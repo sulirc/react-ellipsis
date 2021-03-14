@@ -10,6 +10,8 @@ const Text = {
     "Well, anytime a React component prop or state changes, it’s going to get re-rendered. And that React component that has changed, will force any other children React components to re-render as well.",
 };
 
+const defaultLineHeight = "20";
+const defaultFontSize = "16";
 const defaultLineType = "m";
 const LINES = {
   s: 3,
@@ -22,28 +24,61 @@ const LINES = {
 function App() {
   const [lines, setLines] = useState(LINES[defaultLineType]);
   const [text, setText] = useState(Text.zh);
+  const [lineHeight, setLineHeight] = useState(defaultLineHeight);
+  const [fontSize, setFontSize] = useState(defaultFontSize);
   const handleOnElliResult = (status) => console.log(status);
 
   return (
     <>
-      <label className="select-lines">
-        选择显示行数：
-        {lines} 行
-      </label>
-      <select name="choose-lines" defaultValue={defaultLineType} onChange={(e) => setLines(LINES[e.target.value])}>
-        {Object.keys(LINES).map((type) => (
-          <option key={type} value={type}>
-            {LINES[type]} 行
-          </option>
-        ))}
-      </select>
-
+      <div className="select-cantainer">
+        <select className="select choose-lines" defaultValue={defaultLineType} onChange={(e) => setLines(LINES[e.target.value])}>
+          {Object.keys(LINES).map((type) => (
+            <option key={type} value={type}>
+              {LINES[type]} 行
+            </option>
+          ))}
+        </select>
+        <select className="select choose-text" defaultValue="zh" onChange={(e) => setText(Text[e.target.value])}>
+          {Object.keys(Text).map((type) => (
+            <option key={type} value={type}>
+              {type.toUpperCase()} 文本
+            </option>
+          ))}
+        </select>
+        <div className="select choose-lineheight">
+          <label htmlFor="lineHeight">LineHeight({lineHeight}px)</label>
+          <input
+            type="range"
+            id="lineHeight"
+            name="line-height"
+            min="18"
+            max="24"
+            defaultValue={defaultLineHeight}
+            step="1"
+            onChange={(e) => setLineHeight(e.target.value)}
+          />
+        </div>
+        <div className="select choose-lineheight">
+          <label htmlFor="fontSize">FontSize({fontSize}px)</label>
+          <input
+            type="range"
+            id="fontSize"
+            name="line-height"
+            min="15"
+            max="20"
+            defaultValue={defaultFontSize}
+            step="1"
+            onChange={(e) => setFontSize(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="box">
         <TextEllipsis
           className="ellipsis-demo"
           lines={lines}
           onElliResult={handleOnElliResult}
-          lineHeight="20px"
+          lineHeight={lineHeight + "px"}
+          fontSize={fontSize + "px"}
           ellipsisChar="... "
           showMoreJsx={<div className="my-more-action">👇 展开看更多</div>}
           showLessJsx={<div className="my-less-action">👏 收起来更美</div>}

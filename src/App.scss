@@ -1,9 +1,20 @@
-.select-lines {
-  display: block;
-  text-align: center;
-  margin: 10px auto;
-  font-size: 14px;
-  font-weight: bold;
+.select-cantainer {
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 10px 20px;
+  padding: 10px;
+  border: 1px solid #eee;
+  
+  .select {
+    display: inline-flex;
+    justify-content: center;
+    padding: 4px 10px;
+    margin-left: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-family: fantasy;
+  }
 }
 
 .box {
@@ -12,10 +23,9 @@
   border: 1px solid blue;
   padding: 6px;
   font-size: 14px;
-}
-
-.ellipsis-demo {
-  background-color: aliceblue;
+  .ellipsis-demo {
+    background-color: aliceblue;
+  }
 }
 
 @mixin action {
