@@ -21,8 +21,8 @@ function TextEllipsis({
   const [isOverflow, setIsOverflow] = useState(true);
   const [isTruncDone, setIsTruncDone] = useState(false);
   const ref = useRef(null);
-  const elliLessTextRef = useRef(null);
-  const elliMoreRef = useRef(null);
+  const textRef = useRef(null);
+  const moreRef = useRef(null);
   const text = useRef({
     chunks: null,
     lastChunk: null,
@@ -39,34 +39,33 @@ function TextEllipsis({
   const maxElliHeight = parseInt(lineHeight) * lines;
 
   const reset = useCallback(() => {
-    const elliText = elliLessTextRef.current;
+    const elliText = textRef.current;
     elliText.innerHTML = children;
   }, [children]);
 
   const resetToTrunc = useCallback(() => {
-    const elliText = elliLessTextRef.current;
+    const elliText = textRef.current;
     const elli = text.current;
     elliText.innerHTML = elli.truncText;
-  }, [children]);
+  }, []);
 
   const showMore = useCallback(() => {
     reset();
     setIsExpand(true);
-    elliMoreRef.current.style.display = "none";
+    moreRef.current.style.display = "none";
   }, [reset, setIsExpand]);
 
   const showLess = useCallback(() => {
     resetToTrunc();
     setIsExpand(false);
-    elliMoreRef.current.style.display = "inline-block";
+    moreRef.current.style.display = "inline-block";
   }, [resetToTrunc, setIsExpand]);
 
   const truncate = useCallback(() => {
     const container = ref.current;
-    const elliText = elliLessTextRef.current;
+    const elliText = textRef.current;
     const elli = text.current;
 
-    // use memoize cache
     if (elli.truncText) {
       elliText.innerHTML = elli.truncText;
       return;
@@ -94,7 +93,7 @@ function TextEllipsis({
 
   const process = useCallback(() => {
     const container = ref.current;
-    const elliMore = elliMoreRef.current;
+    const elliMore = moreRef.current;
 
     elliMore && (elliMore.style.display = "none");
 
@@ -111,23 +110,13 @@ function TextEllipsis({
   }, [maxElliHeight, truncate, onElliResult]);
 
   useLayoutEffect(() => {
-    if (isTruncDone) {
-      return;
-    }
-
-    // make sure elliMore node should exist.
-    if (!elliMoreRef.current) {
-      console.warn("elliMoreRef not exists");
+    if (isTruncDone || !moreRef.current) {
       return;
     }
 
     reset();
     process();
   }, [isTruncDone, reset, process]);
-
-  if (!children) {
-    return;
-  }
 
   const elliMoreStyle = isTruncDone
     ? {
@@ -147,10 +136,10 @@ function TextEllipsis({
       style={ellipsisStyle}
     >
       <div className="truncate-text">
-        <span className="text-box" ref={elliLessTextRef} />
+        <span className="text-box" ref={textRef} />
         {isOverflow && (
           <div
-            ref={elliMoreRef}
+            ref={moreRef}
             style={elliMoreStyle}
             className="show-more"
             onClick={showMore}
