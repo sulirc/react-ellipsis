@@ -31,7 +31,6 @@ function TextEllipsis(props) {
     fontSize = "15px",
     lineHeight = "18px",
   } = props;
-  const [lessText, setLessText] = useState("");
   const [overflow, setOverflow] = useState(false);
   const [expand, setExpand] = useState(false);
   const textRef = useRef(null);
@@ -48,7 +47,7 @@ function TextEllipsis(props) {
     wordWrap: "break-word",
     fontSize,
     lineHeight,
-    paddingBottom: (overflow && expand) ? lineHeight : 0,
+    paddingBottom: overflow && expand ? lineHeight : 0,
   };
   const showMore = () => {
     setExpand(true);
@@ -58,7 +57,12 @@ function TextEllipsis(props) {
   };
 
   const jsxMoreContainer = (
-    <div ref={moreRef} style={lessText.length > 0 ? style.BlackFloat : style.InlineBlock} className="show-more" onClick={showMore}>
+    <div
+      ref={moreRef}
+      style={cacheRef.current.textTrunc.length > 0 ? style.BlackFloat : style.InlineBlock}
+      className="show-more"
+      onClick={showMore}
+    >
       {showMoreJsx}
     </div>
   );
@@ -84,7 +88,6 @@ function TextEllipsis(props) {
 
     function retryToGetFitText() {
       if (cache.textTrunc) {
-        setLessText(cache.textTrunc);
         return;
       }
 
@@ -105,7 +108,6 @@ function TextEllipsis(props) {
     clearCache();
     setExpand(false);
     setOverflow(false);
-    setLessText("");
     box.innerHTML = children;
 
     if (text.offsetHeight > maxOffsetHeight) {

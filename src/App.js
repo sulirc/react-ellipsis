@@ -10,7 +10,7 @@ const Text = {
     "Well, anytime a React component prop or state changes, it’s going to get re-rendered. And that React component that has changed, will force any other children React components to re-render as well.",
 };
 
-const defaultLines = "m";
+const defaultLineType = "m";
 const LINES = {
   s: 3,
   m: 5,
@@ -19,45 +19,29 @@ const LINES = {
   xxxl: 100,
 };
 
-let tryCount = 0;
-
-const MAX_TRY_COUNT = 5;
-const CHG_INTERVAL = 3 * 1000;
-
 function App() {
+  const [lines, setLines] = useState(LINES[defaultLineType]);
   const [text, setText] = useState(Text.zh);
   const handleOnElliResult = (status) => console.log(status);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (tryCount >= MAX_TRY_COUNT) {
-        return;
-      }
-      if (tryCount % 2 === 0) {
-        setText(Math.random() + Text.zh.slice(0, 10));
-      } else {
-        setText(Math.random() + Text.zh);
-      }
-
-      tryCount++;
-    }, CHG_INTERVAL);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
 
   return (
     <>
       <label className="select-lines">
         选择显示行数：
-        {LINES[defaultLines]} 行
+        {lines} 行
       </label>
+      <select name="choose-lines" defaultValue={defaultLineType} onChange={(e) => setLines(LINES[e.target.value])}>
+        {Object.keys(LINES).map((type) => (
+          <option key={type} value={type}>
+            {LINES[type]} 行
+          </option>
+        ))}
+      </select>
 
       <div className="box">
         <TextEllipsis
           className="ellipsis-demo"
-          lines={LINES[defaultLines]}
+          lines={lines}
           onElliResult={handleOnElliResult}
           lineHeight="20px"
           ellipsisChar="... "
