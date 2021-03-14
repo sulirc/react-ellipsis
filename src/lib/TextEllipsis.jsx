@@ -20,6 +20,10 @@ const style = {
   },
 };
 
+function joinStyle(x) {
+  return Object.keys(x).map(key => `${key}:${x[key]};`).join(' ');
+}
+
 function TextEllipsis(props) {
   const {
     children,
@@ -57,12 +61,7 @@ function TextEllipsis(props) {
   };
 
   const jsxMoreContainer = (
-    <div
-      ref={moreRef}
-      style={cacheRef.current.textTrunc.length > 0 ? style.BlackFloat : style.InlineBlock}
-      className="show-more"
-      onClick={showMore}
-    >
+    <div ref={moreRef} style={style.InlineBlock} className="show-more" onClick={showMore}>
       {showMoreJsx}
     </div>
   );
@@ -97,6 +96,7 @@ function TextEllipsis(props) {
           box.innerHTML = cache.chunks.join("") + ellipsisChar;
         } else {
           cache.textTrunc = cache.chunks.join("") + ellipsisChar;
+          moreRef.current.style = joinStyle(style.BlackFloat);
         }
       }
     }
@@ -104,7 +104,7 @@ function TextEllipsis(props) {
     clearCache();
     setExpand(false);
     setOverflow(false);
-
+    moreRef.current.style = joinStyle(style.InlineBlock);
     box.innerHTML = children;
 
     if (box.offsetHeight > maxOffsetHeight) {

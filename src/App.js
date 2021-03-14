@@ -11,9 +11,8 @@ const Text = {
 };
 
 const defaultLineHeight = "20";
-const defaultFontSize = "15";
 const defaultLineType = "m";
-const defaultTextType = "ru";
+const defaultTextType = "jp";
 const LINES = {
   s: 3,
   m: 5,
