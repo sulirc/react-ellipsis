@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./TextEllipsis.scss";
 
 export const ELLIPSIS = {
@@ -108,9 +108,10 @@ function TextEllipsis(props) {
     clearCache();
     setExpand(false);
     setOverflow(false);
+
     box.innerHTML = children;
 
-    if (text.offsetHeight > maxOffsetHeight) {
+    if (box.offsetHeight > maxOffsetHeight) {
       setOverflow(true);
       retryToGetFitText();
     } else {
