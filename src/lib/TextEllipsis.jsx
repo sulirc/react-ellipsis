@@ -90,7 +90,6 @@ function TextEllipsis(props) {
     function retryToGetFitText() {
       if (cache.chunks.length === 0) {
         cache.chunks = splitter.splitGraphemes(children);
-        console.log(cache.chunks);
       }
 
       while (!cache.textTrunc) {
