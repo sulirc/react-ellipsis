@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import GraphemeSplitter from './GraphemeSplitter';
 import "./TextEllipsis.scss";
 
+export const splitter = new GraphemeSplitter();
 export const ELLIPSIS = {
   TRUNCATED: "TRUNCATED",
   NOT_TRUNCATED: "NOT_TRUNCATED",
@@ -87,7 +89,9 @@ function TextEllipsis(props) {
 
     function retryToGetFitText() {
       if (cache.chunks.length === 0) {
-        cache.chunks = children.split("");
+        // cache.chunks = children.split("");
+        cache.chunks = splitter.splitGraphemes(children);
+        console.log(cache.chunks);
       }
 
       while (!cache.textTrunc) {
