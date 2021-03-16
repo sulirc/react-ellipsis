@@ -17,8 +17,7 @@ const style = {
     display: "inline-block",
   },
   Hidden: {
-    position: "absolute",
-    top: "-9999px",
+    display: 'none',
   },
 };
 
