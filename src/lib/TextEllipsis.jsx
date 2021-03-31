@@ -21,8 +21,12 @@ const style = {
   },
 };
 
-function joinStyle(x) {
-  return Object.keys(x).map(key => `${key}:${x[key]};`).join(' ');
+function joinStyle(dom, styleMap) {
+  // Fix ios 10 webkit bug of TypeError: Attempted to assign to readonly property.
+  // Avoid to set style by dom.style = styleString
+  for(const sk in styleMap) {
+    dom.style[sk] = styleMap[sk];
+  }
 }
 
 function TextEllipsis(props) {
@@ -97,7 +101,7 @@ function TextEllipsis(props) {
           box.innerHTML = cache.chunks.join("") + ellipsisChar;
         } else {
           cache.textTrunc = cache.chunks.join("") + ellipsisChar;
-          moreRef.current.style = joinStyle(style.BlackFloat);
+          joinStyle(moreRef.current, style.BlackFloat);
         }
       }
     }
@@ -105,7 +109,7 @@ function TextEllipsis(props) {
     clearCache();
     setExpand(false);
     setOverflow(false);
-    moreRef.current.style = joinStyle(style.InlineBlock);
+    joinStyle(moreRef.current, style.InlineBlock);
     box.innerHTML = children;
 
     if (box.offsetHeight > maxOffsetHeight) {
